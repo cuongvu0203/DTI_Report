@@ -1,0 +1,21 @@
+﻿@using DTI_Report.Infrastructure.Entities
+@{
+    var index = 1;
+    @foreach (var item in Model ?? new List<SoLuongHocLieuSoHoa>())
+    {
+        <tr>
+            <th scope="row">@index</th>
+            <td>Khối @item.MA_KHOI</td>
+            <td>@item.TEN_MON_HOC</td>
+            <td>@item.TAI_LIEU</td>
+            <td>@item.VIDEO</td>
+            <td>@item.AM_THANH</td>
+            <td>@item.HINH_ANH</td>
+            <td>@item.CAU_HOI</td>
+            <td>@item.NHUNG</td>
+            <td>@item.DANG_KHAC</td>
+            <td>@item.TONG</td>
+        </tr>
+        index++;
+    }
+}

@@ -1,0 +1,118 @@
+﻿@using DTI_Report.Infrastructure.Entities
+@model List<SoLuongHocLieuSoHoa>
+@{
+    ViewData["Title"] = "Số lượng học liệu được số hóa";
+    
+    var ma_truong = ViewBag.MaTruong;
+    var cap_hoc = ViewBag.MaCapHoc;
+}
+<style type="text/css">
+    .navbar {
+        display: none;
+    }
+
+    .footer {
+        display: none;
+    }
+</style>
+@if (ViewBag.Status == false)
+{
+    <div class="col-md-12">
+        <div class="alert alert-danger" role="alert">
+            @Html.Raw(ViewBag.ThongBao)
+        </div>
+    </div>
+}
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-3">
+            <select class="form-control" id="khoi" onchange="OnchangeKhoi()" asp-items="ViewBag.Khois"></select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-control" id="mon" onchange="OnchangeMon()" asp-items="ViewBag.Mons"></select>
+        </div>
+        <div class="col-md-3">
+        </div>
+        <div class="col-md-3">
+        </div>
+    </div>
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">STT</th>
+                        <th scope="col">Khối</th>
+                        <th scope="col">Môn</th>
+                        <th scope="col">Tài liệu</th>
+                        <th scope="col">Video</th>
+                        <th scope="col">Âm thanh</th>
+                        <th scope="col">Hình ảnh</th>
+                        <th scope="col">Câu hỏi</th>
+                        <th scope="col">Nhúng</th>
+                        <th scope="col">Dạng khác</th>
+                        <th scope="col">Tổng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @await Html.PartialAsync("Partial/DTI/_HocLieuSoHoaListContent", Model)                    
+                </tbody>
+            </table>
+            <div class="clearfix">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var maTruong = '@ma_truong';
+        var maCapHoc = '@cap_hoc';
+        $(document).ready(function () {
+
+        });
+        function OnchangeKhoi() {
+            let maKhoi = $('#khoi').val();
+            let maMon = $('#mon').val();
+            let dropdown = $('#mon');
+            dropdown.empty();
+            dropdown.append($('<option></option>').attr('value', '').text("Chọn môn học"));
+            if (maKhoi != null && maKhoi.length > 0) {
+                let requestUrl = '/danh-sach-mon-hoc?maTruong=' + maTruong + '&maKhoi=' + maKhoi + '&capHoc=' + maCapHoc;
+                $.get(requestUrl, function (data) {
+                    $.each(data, function (key, entry) {
+                        dropdown.append($('<option></option>').attr('value', entry.value).text(entry.text));
+                    });
+                });
+            }
+
+            $.ajax({
+                url: '/Home/FillterKhoi',
+                data: { maTruong: maTruong, maKhoi: maKhoi, monHoc: maMon },
+                type: 'GET',
+                success: function (data) {
+                    $('.table-wrapper tbody').html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+
+        function OnchangeMon() {
+            let maKhoi = $('#khoi').val();
+            let maMon = $('#mon').val();
+            $.ajax({
+                url: '/Home/FillterKhoi',
+                data: { maTruong: maTruong, maKhoi: maKhoi, monHoc: maMon },
+                type: 'GET',
+                success: function (data) {
+                    $('.table-wrapper tbody').html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+    </script>
+}
